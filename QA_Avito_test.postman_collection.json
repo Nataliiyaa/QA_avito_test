@@ -1,0 +1,886 @@
+{
+	"info": {
+		"_postman_id": "f691b4ca-f1f5-4cd8-90f0-207b1e772911",
+		"name": "QA_Avito_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42161034"
+	},
+	"item": [
+		{
+			"name": "Создание объявления",
+			"item": [
+				{
+					"name": "Сохранить объявление с валидными данными",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"const statusText = responseData.status;\r",
+									"\r",
+									"const dashIndex = statusText.indexOf('-');\r",
+									"\r",
+									"if (dashIndex !== -1) {\r",
+									"    const extractedString = statusText.substring(dashIndex + 1).trim();\r",
+									"    \r",
+									"    pm.collectionVariables.set(\"itemID\", extractedString);\r",
+									"    \r",
+									"    console.log(\"Извлеченная строка:\", extractedString);\r",
+									"    console.log(\"Сохранено в переменную: saved_ad_id\");\r",
+									"} else {\r",
+									"    console.log(\"Дефис не найден в строке\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sellerID\": {{sellerID}},\r\n  \"name\": \"testItem\",\r\n  \"price\": 9900,\r\n  \"statistics\": {\r\n    \"likes\": 21,\r\n    \"viewCount\": 11,\r\n    \"contacts\": 43\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SellerID отсутствует",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\", \"поле sellerID обязательно\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"testItem1\",\r\n  \"price\": 9900,\r\n  \"statistics\": {\r\n    \"likes\": 21,\r\n    \"viewCount\": 11,\r\n    \"contacts\": 43\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sellerID неверного типа",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    pm.expect(responseData).to.have.property(\"status\", \"не передано тело объявления\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\", \"\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sellerID\": \"str\",\r\n  \"name\": \"testItem\",\r\n  \"price\": 9900,\r\n  \"statistics\": {\r\n    \"likes\": 21,\r\n    \"viewCount\": 11,\r\n    \"contacts\": 43\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "отсутствует name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    pm.expect(responseData).to.have.property(\"status\", \"400\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\", \"поле name обязательно\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sellerID\": {{sellerID}},\r\n  \"price\": 9900,\r\n  \"statistics\": {\r\n    \"likes\": 21,\r\n    \"viewCount\": 11,\r\n    \"contacts\": 43\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "отсутствует price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sellerID\": {{sellerID}},\r\n  \"name\": \"testItem\",\r\n  \"price\": 9900,\r\n  \"statistics\": {\r\n    \"likes\": 21,\r\n    \"viewCount\": 11,\r\n    \"contacts\": 43\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "statistics неверного формата",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    pm.expect(responseData).to.have.property(\"status\", \"не передано тело объявления\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\", \"\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sellerID\": {{sellerID}},\r\n  \"name\": \"testItem\",\r\n  \"price\": 9900,\r\n  \"statistics\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "получить объявление по id",
+			"item": [
+				{
+					"name": "Получение объявления по существующему id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const ads = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(ads).to.be.an(\"array\");\r",
+									"    \r",
+									"    ads.forEach(ad => {\r",
+									"        pm.expect(ad).to.have.all.keys(\"id\", \"sellerId\", \"name\", \"price\", \"statistics\", \"createdAt\");\r",
+									"        \r",
+									"        pm.expect(ad.id).to.be.a(\"string\");\r",
+									"        pm.expect(ad.sellerId).to.be.a(\"number\");\r",
+									"        pm.expect(ad.name).to.be.a(\"string\");\r",
+									"        pm.expect(ad.price).to.be.a(\"number\");\r",
+									"        pm.expect(ad.createdAt).to.be.a(\"string\");\r",
+									"        \r",
+									"        pm.expect(ad.statistics).to.have.all.keys(\"likes\", \"viewCount\", \"contacts\");\r",
+									"        pm.expect(ad.statistics.likes).to.be.a(\"number\");\r",
+									"        pm.expect(ad.statistics.viewCount).to.be.a(\"number\");\r",
+									"        pm.expect(ad.statistics.contacts).to.be.a(\"number\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item/{{itemID}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item",
+								"{{itemID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ID отсутствует",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "неверный формат ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property(\"result\");\r",
+									"    \r",
+									"    pm.expect(responseData.result).to.have.property(\"message\");\r",
+									"    pm.expect(responseData.result).to.have.property(\"messages\");\r",
+									"    pm.expect(responseData.result.messages).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item/str",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item",
+								"str"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/1/item/",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(response).to.have.all.keys(\"message\", \"code\");\r",
+									"    \r",
+									"    pm.expect(response.message).to.be.a(\"string\");\r",
+									"    pm.expect(response.code).to.be.a(\"number\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/item/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"item",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Получить все объявления продавца",
+			"item": [
+				{
+					"name": "Запрос списка объявлений корректного продавца",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const ads = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(ads).to.be.an(\"array\");\r",
+									"    \r",
+									"    ads.forEach(ad => {\r",
+									"        pm.expect(ad).to.have.all.keys(\"id\", \"sellerId\", \"name\", \"price\", \"statistics\", \"createdAt\");\r",
+									"        \r",
+									"        pm.expect(ad.id).to.be.a(\"string\");\r",
+									"        pm.expect(ad.sellerId).to.be.a(\"number\");\r",
+									"        pm.expect(ad.name).to.be.a(\"string\");\r",
+									"        pm.expect(ad.price).to.be.a(\"number\");\r",
+									"        pm.expect(ad.createdAt).to.be.a(\"string\");\r",
+									"        \r",
+									"        pm.expect(ad.statistics).to.have.all.keys(\"likes\", \"viewCount\", \"contacts\");\r",
+									"        pm.expect(ad.statistics.likes).to.be.a(\"number\");\r",
+									"        pm.expect(ad.statistics.viewCount).to.be.a(\"number\");\r",
+									"        pm.expect(ad.statistics.contacts).to.be.a(\"number\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/1/{{sellerID}}/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"{{sellerID}}",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sellerID не существует",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(response).to.be.an(\"array\");\r",
+									"    pm.expect(response).to.have.lengthOf(0);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/10000000000/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"10000000000",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sellerID неверного формата",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response structure\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(response).to.have.all.keys(\"result\", \"status\");\r",
+									"    \r",
+									"    pm.expect(response.status).to.be.a(\"string\");\r",
+									"    pm.expect(response.result).to.be.an(\"object\");\r",
+									"    \r",
+									"    pm.expect(response.result).to.have.all.keys(\"message\", \"messages\");\r",
+									"    pm.expect(response.result.message).to.be.a(\"string\");\r",
+									"    pm.expect(response.result.message).to.equal(\"передан некорректный идентификатор продавца\");\r",
+									"    pm.expect(response.result.messages).to.be.an(\"object\");\r",
+									"    pm.expect(Object.keys(response.result.messages)).to.have.lengthOf(0);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/str/item",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"str",
+								"item"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "получить статистику объявления",
+			"item": [
+				{
+					"name": "Успешное получение статистики",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const stats = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(stats).to.be.an(\"array\");\r",
+									"    pm.expect(stats).to.have.lengthOf(1);\r",
+									"    \r",
+									"    const stat = stats[0];\r",
+									"    pm.expect(stat).to.have.all.keys(\"contacts\", \"likes\", \"viewCount\");\r",
+									"    \r",
+									"    pm.expect(stat.contacts).to.be.a(\"number\");\r",
+									"    pm.expect(stat.likes).to.be.a(\"number\");\r",
+									"    pm.expect(stat.viewCount).to.be.a(\"number\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/statistic/{{itemID}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"statistic",
+								"{{itemID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ID не существует",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/statistic/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"statistic",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ID неверного формата",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Тело ответа соответствует\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(response).to.have.all.keys(\"result\", \"status\");\r",
+									"    \r",
+									"    pm.expect(response.status).to.be.a(\"string\");\r",
+									"    pm.expect(response.result).to.be.an(\"object\");\r",
+									"    \r",
+									"    pm.expect(response.result).to.have.all.keys(\"message\", \"messages\");\r",
+									"    pm.expect(response.result.message).to.be.a(\"string\");\r",
+									"    pm.expect(response.result.message).to.equal(\"передан некорректный идентификатор объявления\");\r",
+									"    pm.expect(response.result.messages).to.be.an(\"object\");\r",
+									"    pm.expect(Object.keys(response.result.messages)).to.have.lengthOf(0);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/1/statistic/str",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"1",
+								"statistic",
+								"str"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": ""
+		},
+		{
+			"key": "sellerID",
+			"value": ""
+		},
+		{
+			"key": "itemID",
+			"value": ""
+		}
+	]
+}
